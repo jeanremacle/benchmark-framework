@@ -1,0 +1,29 @@
+{
+  "project": "test-project",
+  "iterations": [
+    {
+      "id": "v1-baseline",
+      "name": "Baseline approach",
+      "description": "Simple implementation for reference",
+      "approach": "baseline",
+      "source_path": "iterations/v1_baseline/",
+      "entry_point": "main.py",
+      "parameters": {},
+      "parent": null,
+      "created_at": "2025-02-14T10:00:00Z",
+      "tags": ["baseline"]
+    },
+    {
+      "id": "v2-optimized",
+      "name": "Optimized approach",
+      "description": "Improved implementation",
+      "approach": "optimized",
+      "source_path": "iterations/v2_optimized/",
+      "entry_point": "main.py",
+      "parameters": {"threshold": 0.5},
+      "parent": "v1-baseline",
+      "created_at": "2025-02-14T12:00:00Z",
+      "tags": ["optimized"]
+    }
+  ]
+}

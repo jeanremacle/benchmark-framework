@@ -1,0 +1,13 @@
+{
+  "metrics": [
+    {
+      "id": "exec_time",
+      "name": "Execution Time",
+      "description": "Wall-clock execution time",
+      "type": "performance",
+      "class": "benchmark_framework.metrics.timing.ExecutionTimeMetric",
+      "higher_is_better": false,
+      "unit": "seconds"
+    }
+  ]
+}
