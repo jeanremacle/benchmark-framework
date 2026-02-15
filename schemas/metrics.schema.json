@@ -1,0 +1,71 @@
+{
+  "$defs": {
+    "MetricDefinition": {
+      "description": "Definition of a measurement metric and its Python implementation.",
+      "properties": {
+        "id": {
+          "description": "Unique identifier for this metric",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable name",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "description": "Detailed description",
+          "title": "Description",
+          "type": "string"
+        },
+        "type": {
+          "description": "Metric category (e.g. 'performance', 'ml_quality')",
+          "title": "Type",
+          "type": "string"
+        },
+        "class": {
+          "description": "Fully-qualified Python class reference",
+          "title": "Class",
+          "type": "string"
+        },
+        "higher_is_better": {
+          "description": "Whether higher values indicate better performance",
+          "title": "Higher Is Better",
+          "type": "boolean"
+        },
+        "unit": {
+          "default": "",
+          "description": "Unit of measurement",
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "class",
+        "higher_is_better"
+      ],
+      "title": "MetricDefinition",
+      "type": "object"
+    }
+  },
+  "description": "Root model for metrics.json.",
+  "properties": {
+    "metrics": {
+      "description": "List of metric definitions",
+      "items": {
+        "$ref": "#/$defs/MetricDefinition"
+      },
+      "title": "Metrics",
+      "type": "array"
+    }
+  },
+  "required": [
+    "metrics"
+  ],
+  "title": "MetricsConfig",
+  "type": "object"
+}

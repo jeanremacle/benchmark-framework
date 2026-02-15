@@ -1,0 +1,78 @@
+{
+  "$defs": {
+    "RunDefinition": {
+      "description": "Definition of a benchmark run: which iterations x which metrics.",
+      "properties": {
+        "id": {
+          "description": "Unique identifier for this run",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable name",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "description": "Detailed description",
+          "title": "Description",
+          "type": "string"
+        },
+        "iteration_ids": {
+          "description": "IDs of iterations to include in this run",
+          "items": {
+            "type": "string"
+          },
+          "title": "Iteration Ids",
+          "type": "array"
+        },
+        "metric_ids": {
+          "description": "IDs of metrics to measure in this run",
+          "items": {
+            "type": "string"
+          },
+          "title": "Metric Ids",
+          "type": "array"
+        },
+        "status": {
+          "default": "pending",
+          "description": "Run status: pending, running, completed, failed",
+          "title": "Status",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "When this run was created",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "iteration_ids",
+        "metric_ids",
+        "created_at"
+      ],
+      "title": "RunDefinition",
+      "type": "object"
+    }
+  },
+  "description": "Root model for runs.json.",
+  "properties": {
+    "runs": {
+      "description": "List of run definitions",
+      "items": {
+        "$ref": "#/$defs/RunDefinition"
+      },
+      "title": "Runs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "runs"
+  ],
+  "title": "RunsConfig",
+  "type": "object"
+}

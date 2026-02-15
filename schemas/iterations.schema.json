@@ -1,0 +1,105 @@
+{
+  "$defs": {
+    "Iteration": {
+      "description": "A single solution variant to benchmark.",
+      "properties": {
+        "id": {
+          "description": "Unique identifier for this iteration",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable name",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "description": "Detailed description",
+          "title": "Description",
+          "type": "string"
+        },
+        "approach": {
+          "description": "Approach family (e.g. 'baseline', 'transformer')",
+          "title": "Approach",
+          "type": "string"
+        },
+        "source_path": {
+          "description": "Path to iteration source code directory",
+          "title": "Source Path",
+          "type": "string"
+        },
+        "entry_point": {
+          "default": "main.py",
+          "description": "Entry point file within source_path",
+          "title": "Entry Point",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "description": "Hyperparameters for this iteration",
+          "title": "Parameters",
+          "type": "object"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of parent iteration (for lineage tracking)",
+          "title": "Parent"
+        },
+        "created_at": {
+          "description": "When this iteration was created",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Tags for categorization",
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "approach",
+        "source_path",
+        "created_at"
+      ],
+      "title": "Iteration",
+      "type": "object"
+    }
+  },
+  "description": "Root model for iterations.json.",
+  "properties": {
+    "project": {
+      "default": "",
+      "description": "Project name",
+      "title": "Project",
+      "type": "string"
+    },
+    "iterations": {
+      "description": "List of iterations",
+      "items": {
+        "$ref": "#/$defs/Iteration"
+      },
+      "title": "Iterations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "iterations"
+  ],
+  "title": "IterationsConfig",
+  "type": "object"
+}

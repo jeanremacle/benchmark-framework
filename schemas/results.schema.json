@@ -1,0 +1,75 @@
+{
+  "$defs": {
+    "RunResult": {
+      "description": "Result of a single metric measurement on a single iteration.",
+      "properties": {
+        "run_id": {
+          "description": "ID of the run that produced this result",
+          "title": "Run Id",
+          "type": "string"
+        },
+        "iteration_id": {
+          "description": "ID of the measured iteration",
+          "title": "Iteration Id",
+          "type": "string"
+        },
+        "metric_id": {
+          "description": "ID of the metric used",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "value": {
+          "description": "Measured value",
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "default": "",
+          "description": "Unit of measurement",
+          "title": "Unit",
+          "type": "string"
+        },
+        "executed_at": {
+          "description": "When this measurement was taken",
+          "format": "date-time",
+          "title": "Executed At",
+          "type": "string"
+        },
+        "environment": {
+          "additionalProperties": true,
+          "description": "Execution environment details (platform, python version, GPU)",
+          "title": "Environment",
+          "type": "object"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Additional metadata about this measurement",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "run_id",
+        "iteration_id",
+        "metric_id",
+        "value",
+        "executed_at"
+      ],
+      "title": "RunResult",
+      "type": "object"
+    }
+  },
+  "description": "Root model for results.json.",
+  "properties": {
+    "results": {
+      "description": "List of run results",
+      "items": {
+        "$ref": "#/$defs/RunResult"
+      },
+      "title": "Results",
+      "type": "array"
+    }
+  },
+  "title": "ResultsConfig",
+  "type": "object"
+}
