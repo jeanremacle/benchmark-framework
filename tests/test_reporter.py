@@ -6,14 +6,10 @@ import json
 import shutil
 from pathlib import Path
 
-import pytest
-
 from benchmark_framework.reporter import BenchmarkReporter
 
 
-def _setup_config_with_results(
-    tmp_path: Path, fixtures_dir: Path
-) -> Path:
+def _setup_config_with_results(tmp_path: Path, fixtures_dir: Path) -> Path:
     """Create a config dir with completed run and results."""
     config_dir = tmp_path / "config"
     config_dir.mkdir()
@@ -63,17 +59,13 @@ def _setup_config_with_results(
             },
         ]
     }
-    (config_dir / "results.json").write_text(
-        json.dumps(results, indent=2)
-    )
+    (config_dir / "results.json").write_text(json.dumps(results, indent=2))
 
     return config_dir
 
 
 class TestBenchmarkReporter:
-    def test_generates_report(
-        self, tmp_path: Path, fixtures_dir: Path
-    ) -> None:
+    def test_generates_report(self, tmp_path: Path, fixtures_dir: Path) -> None:
         config_dir = _setup_config_with_results(tmp_path, fixtures_dir)
         reporter = BenchmarkReporter(config_dir)
         report = reporter.generate_report()
@@ -82,9 +74,7 @@ class TestBenchmarkReporter:
         assert "Baseline benchmark" in report
         assert "Execution Time" in report
 
-    def test_highlights_best_value(
-        self, tmp_path: Path, fixtures_dir: Path
-    ) -> None:
+    def test_highlights_best_value(self, tmp_path: Path, fixtures_dir: Path) -> None:
         config_dir = _setup_config_with_results(tmp_path, fixtures_dir)
         reporter = BenchmarkReporter(config_dir)
         report = reporter.generate_report()
@@ -92,9 +82,7 @@ class TestBenchmarkReporter:
         # exec_time is higher_is_better=false, so 1.2 (v2) is best
         assert "**1.2000**" in report
 
-    def test_includes_narrative(
-        self, tmp_path: Path, fixtures_dir: Path
-    ) -> None:
+    def test_includes_narrative(self, tmp_path: Path, fixtures_dir: Path) -> None:
         config_dir = _setup_config_with_results(tmp_path, fixtures_dir)
         reporter = BenchmarkReporter(config_dir)
         report = reporter.generate_report()
@@ -102,9 +90,7 @@ class TestBenchmarkReporter:
         assert "### Analysis" in report
         assert "lowest" in report
 
-    def test_writes_to_file(
-        self, tmp_path: Path, fixtures_dir: Path
-    ) -> None:
+    def test_writes_to_file(self, tmp_path: Path, fixtures_dir: Path) -> None:
         config_dir = _setup_config_with_results(tmp_path, fixtures_dir)
         output = tmp_path / "report.md"
 
@@ -114,9 +100,7 @@ class TestBenchmarkReporter:
         assert output.exists()
         assert output.read_text() == report
 
-    def test_no_completed_runs(
-        self, tmp_path: Path, fixtures_dir: Path
-    ) -> None:
+    def test_no_completed_runs(self, tmp_path: Path, fixtures_dir: Path) -> None:
         config_dir = tmp_path / "empty_config"
         config_dir.mkdir()
 

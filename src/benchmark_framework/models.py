@@ -18,7 +18,9 @@ class Iteration(BaseModel):
     id: str = Field(description="Unique identifier for this iteration")
     name: str = Field(description="Human-readable name")
     description: str = Field(default="", description="Detailed description")
-    approach: str = Field(description="Approach family (e.g. 'baseline', 'transformer')")
+    approach: str = Field(
+        description="Approach family (e.g. 'baseline', 'transformer')"
+    )
     source_path: str = Field(description="Path to iteration source code directory")
     entry_point: str = Field(
         default="main.py", description="Entry point file within source_path"
@@ -30,9 +32,7 @@ class Iteration(BaseModel):
         default=None, description="ID of parent iteration (for lineage tracking)"
     )
     created_at: datetime = Field(description="When this iteration was created")
-    tags: list[str] = Field(
-        default_factory=list, description="Tags for categorization"
-    )
+    tags: list[str] = Field(default_factory=list, description="Tags for categorization")
 
 
 class MetricDefinition(BaseModel):
@@ -63,9 +63,7 @@ class RunDefinition(BaseModel):
     iteration_ids: list[str] = Field(
         description="IDs of iterations to include in this run"
     )
-    metric_ids: list[str] = Field(
-        description="IDs of metrics to measure in this run"
-    )
+    metric_ids: list[str] = Field(description="IDs of metrics to measure in this run")
     status: str = Field(
         default="pending",
         description="Run status: pending, running, completed, failed",

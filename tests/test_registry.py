@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -102,9 +101,7 @@ class TestResolveMetricClass:
 
     def test_raises_on_non_metric_class(self) -> None:
         with pytest.raises(RegistryError, match="not a subclass"):
-            Registry.resolve_metric_class(
-                "benchmark_framework.models.Iteration"
-            )
+            Registry.resolve_metric_class("benchmark_framework.models.Iteration")
 
     def test_raises_on_invalid_reference(self) -> None:
         with pytest.raises(RegistryError, match="Cannot resolve"):

@@ -6,18 +6,15 @@ import json
 import logging
 import platform
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from .metrics.base import BaseMetric, MetricResult
 from .models import (
     Iteration,
     MetricDefinition,
     RunDefinition,
     RunResult,
-    RunsConfig,
-    ResultsConfig,
 )
 from .registry import Registry
 
@@ -43,12 +40,8 @@ class BenchmarkRunner:
         self.iterations_config = Registry.load_iterations(
             self.config_dir / "iterations.json"
         )
-        self.metrics_config = Registry.load_metrics(
-            self.config_dir / "metrics.json"
-        )
-        self.runs_config = Registry.load_runs(
-            self.config_dir / "runs.json"
-        )
+        self.metrics_config = Registry.load_metrics(self.config_dir / "metrics.json")
+        self.runs_config = Registry.load_runs(self.config_dir / "runs.json")
         self.results_path = self.config_dir / "results.json"
 
     def execute_run(self, run_id: str) -> list[RunResult]:
@@ -82,9 +75,7 @@ class BenchmarkRunner:
         except Exception as err:
             run_def.status = "failed"
             logger.error("Run '%s' failed: %s", run_id, err)
-            raise RunnerError(
-                f"Run '{run_id}' failed: {err}"
-            ) from err
+            raise RunnerError(f"Run '{run_id}' failed: {err}") from err
         finally:
             self._save_results(results)
             self._save_run_status(run_def)
@@ -100,29 +91,21 @@ class BenchmarkRunner:
 
     def _resolve_iterations(self, ids: list[str]) -> list[Iteration]:
         """Resolve iteration IDs to Iteration objects."""
-        iteration_map = {
-            it.id: it for it in self.iterations_config.iterations
-        }
+        iteration_map = {it.id: it for it in self.iterations_config.iterations}
         result = []
         for iter_id in ids:
             if iter_id not in iteration_map:
-                raise RunnerError(
-                    f"Iteration '{iter_id}' not found in iterations.json"
-                )
+                raise RunnerError(f"Iteration '{iter_id}' not found in iterations.json")
             result.append(iteration_map[iter_id])
         return result
 
-    def _resolve_metrics(
-        self, ids: list[str]
-    ) -> list[MetricDefinition]:
+    def _resolve_metrics(self, ids: list[str]) -> list[MetricDefinition]:
         """Resolve metric IDs to MetricDefinition objects."""
         metric_map = {m.id: m for m in self.metrics_config.metrics}
         result = []
         for metric_id in ids:
             if metric_id not in metric_map:
-                raise RunnerError(
-                    f"Metric '{metric_id}' not found in metrics.json"
-                )
+                raise RunnerError(f"Metric '{metric_id}' not found in metrics.json")
             result.append(metric_map[metric_id])
         return result
 
@@ -133,9 +116,7 @@ class BenchmarkRunner:
         metric_def: MetricDefinition,
     ) -> RunResult:
         """Execute a single metric measurement on an iteration."""
-        logger.info(
-            "Measuring '%s' on '%s'", metric_def.id, iteration.id
-        )
+        logger.info("Measuring '%s' on '%s'", metric_def.id, iteration.id)
 
         metric_cls = Registry.resolve_metric_class(metric_def.class_ref)
         metric_instance = metric_cls(
@@ -162,7 +143,7 @@ class BenchmarkRunner:
             metric_id=metric_def.id,
             value=metric_result.value,
             unit=metric_result.unit,
-            executed_at=datetime.now(timezone.utc),
+            executed_at=datetime.now(UTC),
             environment=self._get_environment(),
             metadata=metric_result.metadata,
         )

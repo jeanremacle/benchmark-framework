@@ -95,9 +95,7 @@ def load_results(path: str | Path) -> ResultsConfig:
     return Registry.load_results(path)
 
 
-def execute_run(
-    run_id: str, config_dir: str | Path
-) -> list[RunResult]:
+def execute_run(run_id: str, config_dir: str | Path) -> list[RunResult]:
     """Execute a benchmark run.
 
     Convenience wrapper that creates a BenchmarkRunner, executes the

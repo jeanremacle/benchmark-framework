@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 import tempfile
 from typing import Any
-from unittest.mock import patch
 
 import pytest
 
@@ -74,8 +73,6 @@ class TestTimedDecorator:
 
 class TestRequiresGpuDecorator:
     def test_raises_without_cuda(self) -> None:
-        m = DummyMetric(metric_id="dummy", higher_is_better=True)
-
         @requires_gpu
         def gpu_measure(*args: Any, **kwargs: Any) -> MetricResult:
             return MetricResult(metric_id="dummy", value=1.0, unit="s")

@@ -5,7 +5,7 @@ from __future__ import annotations
 import importlib
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from .models import (
     IterationsConfig,
@@ -13,6 +13,8 @@ from .models import (
     ResultsConfig,
     RunsConfig,
 )
+
+_T = TypeVar("_T")
 
 if TYPE_CHECKING:
     from .metrics.base import BaseMetric
@@ -119,14 +121,12 @@ class Registry:
         from .metrics.base import BaseMetric
 
         if not (isinstance(cls, type) and issubclass(cls, BaseMetric)):
-            raise RegistryError(
-                f"'{class_ref}' is not a subclass of BaseMetric"
-            )
+            raise RegistryError(f"'{class_ref}' is not a subclass of BaseMetric")
 
         return cls  # type: ignore[return-value]
 
     @staticmethod
-    def _load[T](path: str | Path, model: type[T]) -> T:
+    def _load(path: str | Path, model: type[_T]) -> _T:
         """Load a JSON file and validate it against a Pydantic model.
 
         Args:
@@ -148,13 +148,9 @@ class Registry:
         try:
             data = json.loads(raw)
         except json.JSONDecodeError as err:
-            raise RegistryError(
-                f"Invalid JSON in '{filepath}': {err}"
-            ) from err
+            raise RegistryError(f"Invalid JSON in '{filepath}': {err}") from err
 
         try:
             return model.model_validate(data)  # type: ignore[union-attr]
         except Exception as err:
-            raise RegistryError(
-                f"Validation failed for '{filepath}': {err}"
-            ) from err
+            raise RegistryError(f"Validation failed for '{filepath}': {err}") from err

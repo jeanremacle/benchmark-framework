@@ -58,8 +58,8 @@ class BaseMetric(ABC):
         """
         ...
 
-    def setup(self) -> None:
+    def setup(self) -> None:  # noqa: B027
         """Optional hook called before measurement."""
 
-    def teardown(self) -> None:
+    def teardown(self) -> None:  # noqa: B027
         """Optional hook called after measurement."""

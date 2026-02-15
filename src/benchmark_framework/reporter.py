@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from .models import MetricDefinition, RunDefinition, RunResult
@@ -25,15 +25,9 @@ class BenchmarkReporter:
         self.iterations_config = Registry.load_iterations(
             self.config_dir / "iterations.json"
         )
-        self.metrics_config = Registry.load_metrics(
-            self.config_dir / "metrics.json"
-        )
-        self.runs_config = Registry.load_runs(
-            self.config_dir / "runs.json"
-        )
-        self.results_config = Registry.load_results(
-            self.config_dir / "results.json"
-        )
+        self.metrics_config = Registry.load_metrics(self.config_dir / "metrics.json")
+        self.runs_config = Registry.load_runs(self.config_dir / "runs.json")
+        self.results_config = Registry.load_results(self.config_dir / "results.json")
 
     def generate_report(self, output_path: str | Path | None = None) -> str:
         """Generate a Markdown comparison report.
@@ -48,9 +42,7 @@ class BenchmarkReporter:
         sections: list[str] = []
         sections.append(self._header())
 
-        completed_runs = [
-            r for r in self.runs_config.runs if r.status == "completed"
-        ]
+        completed_runs = [r for r in self.runs_config.runs if r.status == "completed"]
 
         if not completed_runs:
             sections.append("No completed runs to report.\n")
@@ -70,11 +62,8 @@ class BenchmarkReporter:
     def _header(self) -> str:
         """Generate report header."""
         project = self.iterations_config.project or "Benchmark"
-        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        return (
-            f"# {project} — Benchmark Comparison Report\n\n"
-            f"Generated: {now}\n"
-        )
+        now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
+        return f"# {project} — Benchmark Comparison Report\n\nGenerated: {now}\n"
 
     def _footer(self) -> str:
         """Generate report footer."""
@@ -86,10 +75,7 @@ class BenchmarkReporter:
 
     def _run_section(self, run_def: RunDefinition) -> str:
         """Generate a section for a single run."""
-        run_results = [
-            r for r in self.results_config.results
-            if r.run_id == run_def.id
-        ]
+        run_results = [r for r in self.results_config.results if r.run_id == run_def.id]
 
         if not run_results:
             return f"## {run_def.name}\n\nNo results recorded.\n"
@@ -114,9 +100,7 @@ class BenchmarkReporter:
     ) -> str:
         """Generate a Markdown comparison table."""
         metric_map = {m.id: m for m in self.metrics_config.metrics}
-        iteration_map = {
-            it.id: it for it in self.iterations_config.iterations
-        }
+        iteration_map = {it.id: it for it in self.iterations_config.iterations}
 
         # Group results: metric_id -> iteration_id -> value
         by_metric: dict[str, dict[str, float]] = defaultdict(dict)
@@ -129,13 +113,10 @@ class BenchmarkReporter:
 
         # Header row
         iter_names = [
-            iteration_map[iid].name if iid in iteration_map else iid
-            for iid in iter_ids
+            iteration_map[iid].name if iid in iteration_map else iid for iid in iter_ids
         ]
         header = "| Metric | " + " | ".join(iter_names) + " |"
-        separator = "|" + "|".join(
-            ["---"] * (len(iter_ids) + 1)
-        ) + "|"
+        separator = "|" + "|".join(["---"] * (len(iter_ids) + 1)) + "|"
 
         rows: list[str] = [header, separator]
 
@@ -169,9 +150,7 @@ class BenchmarkReporter:
     ) -> str:
         """Generate narrative analysis of results."""
         metric_map = {m.id: m for m in self.metrics_config.metrics}
-        iteration_map = {
-            it.id: it for it in self.iterations_config.iterations
-        }
+        iteration_map = {it.id: it for it in self.iterations_config.iterations}
 
         by_metric: dict[str, dict[str, float]] = defaultdict(dict)
         for r in run_results:
@@ -192,14 +171,12 @@ class BenchmarkReporter:
                 continue
 
             best_name = (
-                iteration_map[best_id].name
-                if best_id in iteration_map
-                else best_id
+                iteration_map[best_id].name if best_id in iteration_map else best_id
             )
             best_val = values[best_id]
-            direction = "highest" if (
-                metric_def and metric_def.higher_is_better
-            ) else "lowest"
+            direction = (
+                "highest" if (metric_def and metric_def.higher_is_better) else "lowest"
+            )
 
             lines.append(
                 f"- **{metric_name}**: {best_name} achieves the "
@@ -212,26 +189,19 @@ class BenchmarkReporter:
                 sorted_items = sorted(
                     values.items(),
                     key=lambda x: x[1],
-                    reverse=bool(
-                        metric_def and metric_def.higher_is_better
-                    ),
+                    reverse=bool(metric_def and metric_def.higher_is_better),
                 )
                 if len(sorted_items) >= 2:
                     worst_id = sorted_items[-1][0]
                     worst_val = sorted_items[-1][1]
                     if best_val != 0:
-                        diff_pct = abs(
-                            (worst_val - best_val) / best_val * 100
-                        )
+                        diff_pct = abs((worst_val - best_val) / best_val * 100)
                         worst_name = (
                             iteration_map[worst_id].name
                             if worst_id in iteration_map
                             else worst_id
                         )
-                        lines.append(
-                            f"  - {worst_name} differs by "
-                            f"{diff_pct:.1f}%"
-                        )
+                        lines.append(f"  - {worst_name} differs by {diff_pct:.1f}%")
 
         lines.append("")
         return "\n".join(lines)
@@ -249,9 +219,7 @@ class BenchmarkReporter:
         return min(values, key=lambda k: values[k])
 
     @staticmethod
-    def _format_value(
-        value: float, metric_def: MetricDefinition | None
-    ) -> str:
+    def _format_value(value: float, metric_def: MetricDefinition | None) -> str:
         """Format a metric value for display."""
         if value == int(value):
             return str(int(value))

@@ -47,7 +47,8 @@ class ExecutionTimeMetric(BaseMetric):
         Returns:
             MetricResult with execution time in seconds.
         """
-        script = Path(iteration_path) / entry_point
+        iteration_dir = Path(iteration_path).resolve()
+        script = iteration_dir / entry_point
         if not script.exists():
             raise FileNotFoundError(f"Entry point not found: {script}")
 
@@ -56,7 +57,7 @@ class ExecutionTimeMetric(BaseMetric):
             [sys.executable, str(script)],
             capture_output=True,
             text=True,
-            cwd=str(Path(iteration_path)),
+            cwd=str(iteration_dir),
             check=False,
         )
         elapsed = time.perf_counter() - start

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -30,7 +30,7 @@ class TestIteration:
             name="Baseline",
             approach="baseline",
             source_path="iterations/v1/",
-            created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
+            created_at=datetime(2025, 1, 1, tzinfo=UTC),
         )
         assert it.id == "v1"
         assert it.entry_point == "main.py"
@@ -48,7 +48,7 @@ class TestIteration:
             entry_point="train.py",
             parameters={"lr": 0.001, "epochs": 5},
             parent="v2-base",
-            created_at=datetime(2025, 2, 14, tzinfo=timezone.utc),
+            created_at=datetime(2025, 2, 14, tzinfo=UTC),
             tags=["tuning", "transformer"],
         )
         assert it.parent == "v2-base"
@@ -105,7 +105,7 @@ class TestRunDefinition:
             name="Test run",
             iteration_ids=["v1"],
             metric_ids=["exec_time"],
-            created_at=datetime(2025, 2, 14, tzinfo=timezone.utc),
+            created_at=datetime(2025, 2, 14, tzinfo=UTC),
         )
         assert rd.status == "pending"
         assert rd.description == ""
@@ -118,7 +118,7 @@ class TestRunDefinition:
             iteration_ids=["v1", "v2"],
             metric_ids=["exec_time", "accuracy"],
             status="completed",
-            created_at=datetime(2025, 2, 14, tzinfo=timezone.utc),
+            created_at=datetime(2025, 2, 14, tzinfo=UTC),
         )
         assert rd.status == "completed"
         assert len(rd.iteration_ids) == 2
@@ -131,7 +131,7 @@ class TestRunResult:
             iteration_id="v1",
             metric_id="exec_time",
             value=1.23,
-            executed_at=datetime(2025, 2, 14, tzinfo=timezone.utc),
+            executed_at=datetime(2025, 2, 14, tzinfo=UTC),
         )
         assert rr.value == 1.23
         assert rr.unit == ""
@@ -145,7 +145,7 @@ class TestRunResult:
             metric_id="accuracy",
             value=91.7,
             unit="%",
-            executed_at=datetime(2025, 2, 14, tzinfo=timezone.utc),
+            executed_at=datetime(2025, 2, 14, tzinfo=UTC),
             environment={"platform": "linux", "python": "3.11.7"},
             metadata={"dataset_size": 10000},
         )
@@ -163,7 +163,7 @@ class TestConfigModels:
                     name="Baseline",
                     approach="baseline",
                     source_path="iterations/v1/",
-                    created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
+                    created_at=datetime(2025, 1, 1, tzinfo=UTC),
                 )
             ],
         )
@@ -180,7 +180,9 @@ class TestConfigModels:
                     higher_is_better=False,
                     unit="seconds",
                     **{
-                        "class": "benchmark_framework.metrics.timing.ExecutionTimeMetric"
+                        "class": (
+                            "benchmark_framework.metrics.timing.ExecutionTimeMetric"
+                        )
                     },
                 )
             ]
@@ -195,7 +197,7 @@ class TestConfigModels:
                     name="Test",
                     iteration_ids=["v1"],
                     metric_ids=["exec_time"],
-                    created_at=datetime(2025, 2, 14, tzinfo=timezone.utc),
+                    created_at=datetime(2025, 2, 14, tzinfo=UTC),
                 )
             ]
         )
@@ -213,7 +215,7 @@ class TestConfigModels:
                     iteration_id="v1",
                     metric_id="exec_time",
                     value=1.5,
-                    executed_at=datetime(2025, 2, 14, tzinfo=timezone.utc),
+                    executed_at=datetime(2025, 2, 14, tzinfo=UTC),
                 )
             ]
         )
@@ -227,7 +229,7 @@ class TestJsonRoundTrip:
             name="Baseline",
             approach="baseline",
             source_path="iterations/v1/",
-            created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
+            created_at=datetime(2025, 1, 1, tzinfo=UTC),
         )
         data = json.loads(it.model_dump_json())
         it2 = Iteration.model_validate(data)
@@ -255,7 +257,7 @@ class TestJsonRoundTrip:
                     name="Test",
                     approach="test",
                     source_path="src/",
-                    created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
+                    created_at=datetime(2025, 1, 1, tzinfo=UTC),
                     parameters={"lr": 0.01},
                     tags=["test"],
                 )

@@ -39,9 +39,7 @@ def requires_gpu(func: Callable[..., MetricResult]) -> Callable[..., MetricResul
         try:
             import torch
         except ImportError as err:
-            raise RuntimeError(
-                "GPU required but torch is not installed"
-            ) from err
+            raise RuntimeError("GPU required but torch is not installed") from err
         if not torch.cuda.is_available():
             raise RuntimeError("GPU required but CUDA is not available")
         return func(*args, **kwargs)

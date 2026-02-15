@@ -64,9 +64,7 @@ def _setup_config_dir(tmp_path: Path, fixtures_dir: Path) -> Path:
 
 
 class TestBenchmarkRunner:
-    def test_execute_run_with_mock(
-        self, tmp_path: Path, fixtures_dir: Path
-    ) -> None:
+    def test_execute_run_with_mock(self, tmp_path: Path, fixtures_dir: Path) -> None:
         config_dir = _setup_config_dir(tmp_path, fixtures_dir)
 
         with patch(
@@ -121,18 +119,14 @@ class TestBenchmarkRunner:
         runs_data = json.loads((config_dir / "runs.json").read_text())
         assert runs_data["runs"][0]["status"] == "failed"
 
-    def test_raises_on_unknown_run(
-        self, tmp_path: Path, fixtures_dir: Path
-    ) -> None:
+    def test_raises_on_unknown_run(self, tmp_path: Path, fixtures_dir: Path) -> None:
         config_dir = _setup_config_dir(tmp_path, fixtures_dir)
         runner = BenchmarkRunner(config_dir)
 
         with pytest.raises(RunnerError, match="not found"):
             runner.execute_run("nonexistent-run")
 
-    def test_append_only_results(
-        self, tmp_path: Path, fixtures_dir: Path
-    ) -> None:
+    def test_append_only_results(self, tmp_path: Path, fixtures_dir: Path) -> None:
         config_dir = _setup_config_dir(tmp_path, fixtures_dir)
 
         with patch(
@@ -142,32 +136,22 @@ class TestBenchmarkRunner:
             runner = BenchmarkRunner(config_dir)
 
             # Reset status before each run
-            runs_data = json.loads(
-                (config_dir / "runs.json").read_text()
-            )
+            runs_data = json.loads((config_dir / "runs.json").read_text())
             runs_data["runs"][0]["status"] = "pending"
-            (config_dir / "runs.json").write_text(
-                json.dumps(runs_data, indent=2)
-            )
+            (config_dir / "runs.json").write_text(json.dumps(runs_data, indent=2))
             runner = BenchmarkRunner(config_dir)
             runner.execute_run("run-001")
 
-            runs_data = json.loads(
-                (config_dir / "runs.json").read_text()
-            )
+            runs_data = json.loads((config_dir / "runs.json").read_text())
             runs_data["runs"][0]["status"] = "pending"
-            (config_dir / "runs.json").write_text(
-                json.dumps(runs_data, indent=2)
-            )
+            (config_dir / "runs.json").write_text(json.dumps(runs_data, indent=2))
             runner = BenchmarkRunner(config_dir)
             runner.execute_run("run-001")
 
         data = json.loads((config_dir / "results.json").read_text())
         assert len(data["results"]) == 2
 
-    def test_environment_captured(
-        self, tmp_path: Path, fixtures_dir: Path
-    ) -> None:
+    def test_environment_captured(self, tmp_path: Path, fixtures_dir: Path) -> None:
         config_dir = _setup_config_dir(tmp_path, fixtures_dir)
 
         with patch(
