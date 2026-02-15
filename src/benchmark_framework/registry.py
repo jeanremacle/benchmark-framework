@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
+from pydantic import BaseModel
+
 from .models import (
     IterationsConfig,
     MetricsConfig,
@@ -14,7 +16,7 @@ from .models import (
     RunsConfig,
 )
 
-_T = TypeVar("_T")
+_T = TypeVar("_T", bound=BaseModel)
 
 if TYPE_CHECKING:
     from .metrics.base import BaseMetric
@@ -123,7 +125,7 @@ class Registry:
         if not (isinstance(cls, type) and issubclass(cls, BaseMetric)):
             raise RegistryError(f"'{class_ref}' is not a subclass of BaseMetric")
 
-        return cls  # type: ignore[return-value]
+        return cls
 
     @staticmethod
     def _load(path: str | Path, model: type[_T]) -> _T:
@@ -151,6 +153,6 @@ class Registry:
             raise RegistryError(f"Invalid JSON in '{filepath}': {err}") from err
 
         try:
-            return model.model_validate(data)  # type: ignore[union-attr]
+            return model.model_validate(data)
         except Exception as err:
             raise RegistryError(f"Validation failed for '{filepath}': {err}") from err
