@@ -265,3 +265,44 @@ Execute in order. Each task should result in a commit.
 3. **Why append-only results?** — Full history enables trend analysis and prevents accidental data loss. Filtering is done at report time.
 4. **Why `uv` over pip/poetry?** — Jean's preferred toolchain. Fast, reliable, handles lockfiles well.
 5. **Why no ML deps in core?** — This repo is a generic framework. ML-specific metrics (accuracy, F1) import sklearn/torch only when instantiated, as optional extras.
+
+## Session Communication Protocol
+
+### PM Communication Protocol
+
+#### Inbound — directives from PM layer (read-only)
+
+At **session start** and before beginning any new step, read `directives.md` in the project root.
+This file contains current priorities, decisions, and constraints set by the project management layer.
+
+**Rules:**
+
+- Never modify `directives.md` — it is owned by the PM layer
+- If directives conflict with `PLAN.md`, follow directives (they represent latest decisions)
+- If directives are absent or empty, follow `PLAN.md` as-is
+
+#### Outbound — journal to PM layer (append-only)
+
+After completing each implementation step, or when encountering a blocker,
+**append** a timestamped entry to `journal.md` in the project root:
+
+```markdown
+### {ISO-8601 timestamp} — Step {N}: {short title}
+**Status**: ✅ Complete | 🚧 In Progress | ❌ Blocked
+**Changes**: {list of files created or modified}
+**Next**: {intended next step, referencing PLAN.md}
+**Blockers**: {None | description of what needs a PM decision}
+```
+
+**Rules:**
+
+- **Never rewrite or delete** existing entries — append only
+- Create the file if it does not exist
+- Keep entries factual and concise
+- Reference `PLAN.md` step numbers for traceability
+
+#### Deliverables Boundary
+
+All code artifacts (source, tests, configs, plans) stay in this repo.
+Never write files outside the repo root.
+Never write files into `../project-management/`.

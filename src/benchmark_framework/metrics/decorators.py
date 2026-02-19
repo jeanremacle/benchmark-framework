@@ -37,7 +37,7 @@ def requires_gpu(func: Callable[..., MetricResult]) -> Callable[..., MetricResul
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> MetricResult:
         try:
-            import torch
+            import torch  # type: ignore[import-not-found]
         except ImportError as err:
             raise RuntimeError("GPU required but torch is not installed") from err
         if not torch.cuda.is_available():
